@@ -1,4 +1,4 @@
-const table = new Map([
+const table = [
     ['CC', 'Coord Conjuncn'],
     ['CD', 'Cardinal number'],
     ['DT', 'Determiner'],
@@ -8,17 +8,17 @@ const table = new Map([
     ['JJ', 'Adjective'],
     ['JJR', 'Adj., comparative'],
     ['JJS', 'Adj., superlative'],
-    ['LS]', 'List item marker'],
+    ['LS', 'List item marker'],
     ['MD', 'Modal'],
     ['NN', 'Noun, sing. or mass'],
     ['NNP', 'Proper noun, sing.'],
     ['NNPS', 'Proper noun, plural'],
     ['NNS', 'Noun, plural'],
-    ['POS]', 'Possessive ending'],
+    ['POS', 'Possessive ending'],
     ['PDT', 'Predeterminer'],
     ['PP$', 'Possessive pronoun'],
     ['PRP', 'Personal pronoun'],
-    ['RB]', 'Adverb'],
+    ['RB', 'Adverb'],
     ['RBR', 'Adverb, comparative'],
     ['RBS', 'Adverb, superlative'],
     ['RP', 'Particle'],
@@ -35,7 +35,7 @@ const table = new Map([
     ['WP', 'Wh pronoun'],
     ['WP$', 'Possessive-Wh'],
     ['WRB', 'Wh-adverb']
-]);
+];
 module.exports = table;
 
 

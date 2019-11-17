@@ -1,126 +1,39 @@
 import React, {Component} from 'react';
-import {Form, Button, Table} from "react-bootstrap";
-
-const CorpusText = {
-    width: "80%",
-    marginLeft: "auto",
-    marginRight: "auto"
-};
+import {Button, Table} from "react-bootstrap";
 
 
 class TabCorpus extends Component {
 
     state = {
-        files: null
+        corpuse: []
     };
 
     constructor(props) {
-        super();
-        this.downloadAndReadFile = this.downloadAndReadFile.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.handleChangeName = this.handleChangeName.bind(this);
-        this.saveFile = this.saveFile.bind(this);
-        this.saveText = this.saveText.bind(this);
+        super(props);
+        this.openText = this.openText.bind(this);
+        this.openAnnotateText = this.openAnnotateText.bind(this);
+        this.loadCorpuse();
     }
 
-    openFileDialog() {
-        document.getElementById('file-input').click();
+    openText(event){
+        this.props.updateKey({tab:2,filename:event.target.name});
     }
 
-    downloadAndReadFile(event) {
-        const textFile = event.target.files[0];
-        const data = new FormData();
-        data.append('file', textFile);
-        //data.append('filename', this.fileName.value);
-
-        // fetch('http://localhost:5000/uploadFile', {
-        //     method: 'POST',
-        //     mode: 'no-cors',
-        //     body: data,
-        // }).then((response) => {
-        //     console.log(response);
-        //     response.json().then((body) => {
-        //         console.log(body);
-        //     });
-        // });
-        const makeRequest = async () => {
-            let file = await this.loadFile(textFile);
-            console.log(file.text);
-            this.setState({data: file.text, filename: file.name});
-        }
-        makeRequest();
-
+    openAnnotateText(event){
+        console.log(event.target.name);
+        this.props.updateKey({tab:4,filenameAn:event.target.name});
     }
 
+    async loadCorpuse() {
+        let responseJS =await fetch("http://localhost:5000/corpuse");
+        let response = await responseJS.json();
 
-    loadFile(file) {
-        return new Promise(((resolve, reject) => {
-            const formData = new FormData();
-            formData.append("file", file);
-            const xmlhttp = new XMLHttpRequest();
-            xmlhttp.open("POST", "http://localhost:5000/uploadFile", true);
-            xmlhttp.onload = function () {
-                if (xmlhttp.status === 200) {
-                    resolve(JSON.parse(xmlhttp.response));
-                } else {
-                    reject();
-                }
-            };
-            xmlhttp.send(formData);
-        }));
-    }
+        this.setState({corpuse:response.corpuse});
 
-    saveFile() {
-        return new Promise(((resolve, reject) => {
-            const formData = new FormData();
-            formData.append("file", this.state.filename);
-            formData.append('text', this.state.data);
-            const xmlhttp = new XMLHttpRequest();
-            xmlhttp.open("POST", "http://localhost:5000/saveFile", true);
-            xmlhttp.onload = function () {
-                if (xmlhttp.status === 200) {
-                    resolve(JSON.parse(xmlhttp.response));
-                } else {
-                    reject();
-                }
-            };
-            xmlhttp.send(formData);
-        }));
-    }
-
-    saveText() {
-        //  const textFile = this.state.filename;
-
-
-        //data.append('filename', this.fileName.value);
-
-        // fetch('http://localhost:5000/uploadFile', {
-        //     method: 'POST',
-        //     mode: 'no-cors',
-        //     body: data,
-        // }).then((response) => {
-        //     console.log(response);
-        //     response.json().then((body) => {
-        //         console.log(body);
-        //     });
-        // });
-        const makeRequest = async () => {
-            let file = await this.saveFile();
-            console.log(file);
-            //this.setState({data:file.text,filename:file.name});
-        }
-        makeRequest();
-    }
-
-    handleChange(event) {
-        this.setState({data: event.target.value});
-    }
-
-    handleChangeName(event) {
-        this.setState({filename: event.target.value});
     }
 
     render() {
+        let i=0;
         return (
 
             <div>
@@ -134,9 +47,11 @@ class TabCorpus extends Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {this.state.files.map(function(file){
-                        return <tr><td>{file.id}</td><td>{file.name}</td><td>{file.words}</td>
-                            <td><Button style={{marginLeft:1+'em'}}>Open</Button><Button>Delete</Button></td></tr>
+                    {this.state.corpuse.map((file)=>{
+                        i++;
+                        return <tr><td>{i}</td><td>{file[1]}</td><td>{file[2]}</td>
+                            <td><Button style={{marginLeft:1+'em'}} name={file[1]} onClick={this.openText} >Open</Button>
+                                <Button style={{marginLeft:1+'em'}} name={file[1]} onClick={this.openAnnotateText} >Annotate</Button></td></tr>
                     })}
 
                     </tbody>

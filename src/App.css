@@ -31,3 +31,33 @@
     transform: rotate(360deg);
   }
 }
+
+.green {
+  background-color: #bdedc1;
+}
+
+.red {
+  background-color: #edb2a6;
+}
+
+.isHidden {
+  display: none;
+}
+
+.context-menu-item :hover{
+  background-color: #9999FF;
+}
+
+.editorClassName {
+  height: 500px !important;
+  border: 1px solid black;
+}
+
+.context-menu {
+  height:150px;
+  overflow:auto;
+  background-color: aliceblue;
+  border: 4px solid #61dafb;
+  border-radius: 5px;
+  cursor: pointer;
+}
