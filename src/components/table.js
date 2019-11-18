@@ -16,7 +16,7 @@ const table = [
     ['NNS', 'Noun, plural'],
     ['POS', 'Possessive ending'],
     ['PDT', 'Predeterminer'],
-    ['PP$', 'Possessive pronoun'],
+    ['PRP$', 'Possessive pronoun'],
     ['PRP', 'Personal pronoun'],
     ['RB', 'Adverb'],
     ['RBR', 'Adverb, comparative'],

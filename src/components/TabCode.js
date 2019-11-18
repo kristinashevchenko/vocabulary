@@ -3,29 +3,27 @@ import {Button, Table} from "react-bootstrap";
 
 const table = require('./table');
 const marginAdd = {
-    margin: "2em",
-    //marginRight: "15em"
-
+    margin: "2em"
 };
 
 class TabCode extends Component {
 
     state = {
-        codes: table
+        codes: table,
+        statistics: null
     };
 
     constructor(props) {
         super(props);
-        this.addCode = this.addCode.bind(this);
         this.showTags = this.showTags.bind(this);
         this.showWords = this.showWords.bind(this);
         this.loadStatistics();
+        console.log(this.state.codes);
     }
 
     async loadStatistics() {
         let responseJS = await fetch("http://localhost:5000/statistics");
         let response = await responseJS.json();
-        console.log(response);
         this.setState({statistics: response.map});
     }
 
@@ -36,7 +34,7 @@ class TabCode extends Component {
         Object.keys(codeObj[1].tag_freq).map((key) => {
             let tr = document.createElement('tr');
             tr.className = 'green';
-            tr.innerHTML = `<td></td>
+            tr.innerHTML = `<td></td><td></td>
                             <td>${key}</td>
                             <td>${codeObj[1].tag_freq[key]}</td>
                             <td style="width:30%;" class="wordCode"></td>`;
@@ -52,18 +50,12 @@ class TabCode extends Component {
         Object.keys(codeObj[1].word_freq).map((key) => {
             let tr = document.createElement('tr');
             tr.className = 'red';
-            tr.innerHTML = `<td></td>
+            tr.innerHTML = `<td></td><td></td>
                             <td>${key}</td>
                             <td>${codeObj[1].word_freq[key]}</td>
                             <td style="width:30%;" class="wordCode"></td>`;
             sibling.parentNode.insertBefore(tr, sibling);
         });
-    }
-
-    async addCode() {
-        let responseJS = await fetch("http://localhost:5000/corpuse");
-        let response = await responseJS.json();
-        this.setState({corpuse: response.corpuse});
     }
 
     render() {
@@ -76,6 +68,7 @@ class TabCode extends Component {
                     <tr>
                         <th>#</th>
                         <th>Code</th>
+                        <th>Definition</th>
                         <th>Frequency</th>
                         <th>Action</th>
                     </tr>
@@ -83,9 +76,13 @@ class TabCode extends Component {
                     <tbody>
                     {this.state.statistics && this.state.statistics.map((file) => {
                         i++;
+                        let def = this.state.codes.find(elem => elem[0] === file[0]);
+                        //def = def[1];
+                        console.log(def);
                         return <tr id={file[0]}>
                             <td>{i}</td>
                             <td>{file[0]}</td>
+                            <td>{def && def[1]}</td>
                             <td>{file[1].freq}</td>
                             <td><Button name={file[0]} onClick={this.showTags}>Tags</Button>
                                 <Button name={file[0]} onClick={this.showWords}>Words</Button></td>

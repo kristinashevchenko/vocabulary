@@ -34,10 +34,12 @@
 
 .green {
   background-color: #bdedc1;
+  margin: 2em;
 }
 
 .red {
   background-color: #edb2a6;
+  margin: 2em;
 }
 
 .isHidden {

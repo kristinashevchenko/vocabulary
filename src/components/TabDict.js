@@ -73,7 +73,6 @@ class TabDict extends Component {
     async downloadDictionary() {
         let responseJS = await fetch("http://localhost:5000/dictionary");
         let response = await responseJS.json();
-        console.log(response.map);
         this.setState({map: response.map, filteredMap: response.map});
 
     }
@@ -96,7 +95,6 @@ class TabDict extends Component {
         const canon_word = event.target.name;
         fetch(`http://localhost:5000/getWord?word=${canon_word}`).then((dataJS) => {
             dataJS.json().then((data) => {
-                console.log(data);
                 const words = data.words;
                 let forms;
                 let sibling = document.getElementById(canon_word).nextSibling;
