@@ -2,13 +2,10 @@ import React, {Component} from 'react';
 import {Form, Button, InputGroup, Table} from "react-bootstrap";
 import {ContextMenu, MenuItem, ContextMenuTrigger} from "react-contextmenu";
 import '../App.css';
-import {Editor} from 'react-draft-wysiwyg';
 import {EditorState, convertToRaw, ContentState} from 'draft-js';
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import htmlToDraft from 'html-to-draftjs';
 
-import $ from 'jquery';
 
 const CorpusText = {
     width: "80%",
@@ -120,7 +117,6 @@ class TabAnnotateText extends Component {
     }
 
     onEditorStateChange = (editorState) => {
-        console.log(editorState);
         this.setState({
             editorState,
         });
@@ -148,8 +144,6 @@ class TabAnnotateText extends Component {
             });
             this.setState({data: textValue, editorState: textValue, offset: null, text: null});
         }
-
-        console.log(123, this.state.text, code);
     }
 
 

@@ -153,7 +153,6 @@ class TabText extends Component {
 
     sortAlph() {
         let sorted = this.state.map.sort((a, b) => {
-            console.log(a);
             if (a[0] < b[0]) return -1;
             else if (a[0] > b[0]) return 1;
             else return 0;
@@ -163,7 +162,6 @@ class TabText extends Component {
 
     sortAlphRev() {
         let sorted = this.state.map.sort((a, b) => {
-            console.log(a);
             if (a[0] > b[0]) return -1;
             else if (a[0] < b[0]) return 1;
             else return 0;
