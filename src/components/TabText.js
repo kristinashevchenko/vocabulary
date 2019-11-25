@@ -28,7 +28,6 @@ class TabText extends Component {
         filteredMap: new SortedMap(),
         textLength: 0,
         shouldLoadText: false,
-        word: null
     };
 
     constructor(props) {
@@ -150,15 +149,6 @@ class TabText extends Component {
             this.setState({filename: newProps.filename});
             setTimeout(this.readFile.bind(this), 100);
         }
-
-        if (oldProps.word !== newProps.word) {
-            this.setState({word: newProps.word});
-
-            // $('#textData').highlightWithinTextarea({
-            //     highlight: newProps.word
-            // });
-
-        }
     }
 
     sortAlph() {
@@ -205,7 +195,6 @@ class TabText extends Component {
         let filter = document.getElementById("filter").value;
         let regex = new RegExp(`/\w*${filter}\w*/g`);
         let sorted = this.state.map.filter((word) => {
-            console.log(word[0], word[0].match(regex));
             if (word[0].includes(filter)) {
                 return true;
             }

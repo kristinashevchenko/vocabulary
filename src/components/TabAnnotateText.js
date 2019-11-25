@@ -104,6 +104,7 @@ class TabAnnotateText extends Component {
     }
 
     componentDidUpdate(oldProps) {
+        console.log(9);
         const newProps = this.props;
 
         if (oldProps.filename !== newProps.filename) {
@@ -127,10 +128,7 @@ class TabAnnotateText extends Component {
 
 
     savePosition = () => {
-
         this.textAreaRef.current.scrollTop = +this.state.scrollTop;
-
-
     }
 
 
@@ -145,7 +143,6 @@ class TabAnnotateText extends Component {
                 if (index >= offset - 2 && index <= offset + 2) {
 
                     match = match.replace(/<[A-Z]*\$?>/, `<${code}>`);
-                    match = match.replace(/<\/[A-Z]*\$?>/, `</${code}>`);
                 }
                 return match;
             });

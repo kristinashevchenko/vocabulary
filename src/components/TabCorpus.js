@@ -12,6 +12,9 @@ class TabCorpus extends Component {
         super(props);
         this.openText = this.openText.bind(this);
         this.openAnnotateText = this.openAnnotateText.bind(this);
+    }
+
+    componentDidUpdate(oldProps) {
         this.loadCorpuse();
     }
 
@@ -20,16 +23,13 @@ class TabCorpus extends Component {
     }
 
     openAnnotateText(event){
-        console.log(event.target.name);
         this.props.updateKey({tab:4,filenameAn:event.target.name});
     }
 
     async loadCorpuse() {
         let responseJS =await fetch("http://localhost:5000/corpuse");
         let response = await responseJS.json();
-
         this.setState({corpuse:response.corpuse});
-
     }
 
     render() {
