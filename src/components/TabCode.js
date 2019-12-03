@@ -222,7 +222,7 @@ class TabCode extends Component {
     };
 
     filterWords = () => {
-        let word = document.querySelector('#filter_word').value;
+        let word = document.querySelector('#filter_word2').value;
         let stat = this.state.statistics;
         if (!word) this.setState({filter_statistics: stat});
         else {
@@ -239,6 +239,7 @@ class TabCode extends Component {
             });
             this.setState({filter_statistics: stat});
         }
+        console.log(word, stat);
 
 
     };
@@ -268,7 +269,7 @@ class TabCode extends Component {
                                            onClick={this.sortWords}>Reverted Frequency Tags</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
-                    <input id="filter_word" style={marginDisplay} type="text"/>
+                    <input id="filter_word2" style={marginDisplay} type="text"/>
                     <Button variant="primary" type="button" style={marginDisplay} onClick={this.filterWords}>
                         Filter
                     </Button>
@@ -322,7 +323,7 @@ class TabCode extends Component {
                             let words = Object.keys(obj[1].word_freq);
                             words.forEach(word => {
 
-                                trs.push(<tr className="red isHidden" name={obj[0]}>
+                                trs.push(<tr className="green isHidden" name={obj[0]}>
                                     <td>{i}</td>
                                     <td></td>
                                     <td>{word}</td>

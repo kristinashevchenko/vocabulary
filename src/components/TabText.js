@@ -25,7 +25,7 @@ class TabText extends Component {
         data: '',
         filename: '',
         map: map,
-        filteredMap: new SortedMap(),
+        filteredMap: null,
         textLength: 0,
         shouldLoadText: false,
     };
@@ -231,7 +231,7 @@ class TabText extends Component {
                         </Form.Control>
                     </Form.Group>
                     <Button variant="warning" style={{marginRight: 2 + 'em'}} onClick={this.saveText}>
-                        Save
+                        Add to texts
                     </Button>
                     <input id="file-input" type="file" name="name" style={{display: 'none'}}
                            onChange={this.downloadAndReadFile}/>
@@ -239,7 +239,7 @@ class TabText extends Component {
                         File
                     </Button>
                 </Form>
-                {isSaved &&
+                {this.state.filteredMap &&
                 <div>
                     <h3>Number of words: {this.state.textLength}</h3>
                     <div>
