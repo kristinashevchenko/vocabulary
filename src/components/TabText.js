@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Form, Button, InputGroup, Table} from "react-bootstrap";
-
-import $ from 'jquery';
+import { sortFunc } from './tabTextSort';
 
 const CorpusText = {
     width: "80%",
@@ -10,20 +9,17 @@ const CorpusText = {
 };
 
 const marginL = {
-
     marginLeft: "2em"
-
 };
 const SortedMap = require("collections/sorted-map");
-
 const map = new SortedMap();
-
 
 class TabText extends Component {
 
     state = {
         data: '',
         filename: '',
+        filter: '',
         map: map,
         filteredMap: null,
         textLength: 0,
@@ -31,21 +27,15 @@ class TabText extends Component {
     };
 
     constructor(props) {
-        super();
+        super(props);
 
         this.downloadAndReadFile = this.downloadAndReadFile.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleChangeName = this.handleChangeName.bind(this);
         this.saveFile = this.saveFile.bind(this);
         this.saveText = this.saveText.bind(this);
-        this.sortRev = this.sortRev.bind(this);
-        this.sortAlph = this.sortAlph.bind(this);
-        this.sortAlphRev = this.sortAlphRev.bind(this);
-        this.sortFreqRev = this.sortFreqRev.bind(this);
         this.filterMap = this.filterMap.bind(this);
-
     }
-
 
     openFileDialog() {
         document.getElementById('file-input').click();
@@ -53,25 +43,21 @@ class TabText extends Component {
 
     downloadAndReadFile(event) {
         const textFile = event.target.files[0];
-        const data = new FormData();
-        data.append('file', textFile);
 
         const makeRequest = async () => {
-            let file = await this.loadFile(textFile);
+            const file = await this.loadFile(textFile);
             this.setState({data: file.text, filename: file.name});
         }
         makeRequest();
-
     }
 
     async readFile() {
         const textFile = this.state.filename;
-        let responseJS = await fetch(`http://localhost:5000/readFile?filename=${textFile}`);
-        let file = await responseJS.json();
+        const responseJS = await fetch(`http://localhost:5000/readFile?filename=${textFile}`);
+        const file = await responseJS.json();
 
         this.setState({map: file.map, textLength: file.textLength, filteredMap: file.map, data: file.text});
     }
-
 
     loadFile(file) {
         return new Promise(((resolve, reject) => {
@@ -111,9 +97,8 @@ class TabText extends Component {
 
     saveText() {
         const makeRequest = async () => {
-            let file = await this.saveFile();
+            const file = await this.saveFile();
             this.setState({map: file.map, textLength: file.textLength, filteredMap: file.map});
-            alert('file saved');
         }
         makeRequest();
     }
@@ -121,7 +106,7 @@ class TabText extends Component {
     analyzeText() {
         const makeRequest = async () => {
             let file = await this.saveFile();
-            let map2 = new SortedMap;
+            let map2 = new SortedMap();
             file.map.forEach(function (item, key) {
                 map2.set(item[0], item[1]);
 
@@ -134,12 +119,16 @@ class TabText extends Component {
 
     handleChange(event) {
         this.setState({data: event.target.value});
-
     }
 
     handleChangeName(event) {
         this.setState({filename: event.target.value});
+    }
 
+    handleKeyChange = (event, key) => {
+        this.setState({
+            [key]: event.target.value
+        })
     }
 
     componentDidUpdate(oldProps) {
@@ -151,73 +140,30 @@ class TabText extends Component {
         }
     }
 
-    sortAlph() {
-        let sorted = this.state.map.sort((a, b) => {
-            if (a[0] < b[0]) return -1;
-            else if (a[0] > b[0]) return 1;
-            else return 0;
-        });
-        this.setState({filteredMap: sorted});
-    }
-
-    sortAlphRev() {
-        let sorted = this.state.map.sort((a, b) => {
-            if (a[0] > b[0]) return -1;
-            else if (a[0] < b[0]) return 1;
-            else return 0;
-        });
-        this.setState({filteredMap: sorted});
-    }
-
-    sortRev() {
-        let sorted = this.state.map.sort((a, b) => {
-            if (a[1].amount < b[1].amount) return 1;
-            else if (a[1].amount > b[1].amount) return -1;
-            else return 0;
-        });
-
-        this.setState({filteredMap: sorted});
-    }
-
-    sortFreqRev() {
-        let sorted = this.state.map.sort((a, b) => {
-            if (a[1].amount > b[1].amount) return 1;
-            else if (a[1].amount < b[1].amount) return -1;
-            else return 0;
-        });
-
+    sortMap = (sortType) => {
+        const sortF = sortFunc(sortType);
+        const sorted = this.state.map.sort(sortF);
         this.setState({filteredMap: sorted});
     }
 
     filterMap() {
-        let filter = document.getElementById("filter").value;
+        let filter = this.state.filter;
         let regex = new RegExp(`/\w*${filter}\w*/g`);
-        let sorted = this.state.map.filter((word) => {
-            if (word[0].includes(filter)) {
-                return true;
-            }
-            return false;
-        });
+        let sorted = this.state.map.filter(word => word[0].includes(filter));
 
         this.setState({filteredMap: sorted});
     }
 
 
     render() {
-        const isSaved = this.state.map;
-        let i = 0;
-
         return (
             <div>
                 <Form>
-
                     <Form.Group controlId="exampleForm.ControlTextarea1" style={CorpusText}>
-
                         <InputGroup>
                             <Form.Label>Filename</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="new_text.txt"
                                 aria-describedby="inputGroupPrepend"
                                 value={this.state.filename}
                                 required
@@ -243,19 +189,45 @@ class TabText extends Component {
                 <div>
                     <h3>Number of words: {this.state.textLength}</h3>
                     <div>
-                        <Button variant="primary" type="button" style={marginL} onClick={this.sortAlph}>
+                        <Button 
+                            variant="primary"
+                            type="button" 
+                            style={marginL} 
+                            onClick={this.sortMap.bind(this, 'sort_alph')}
+                        >
                             Alphabet Order
                         </Button>
-                        <Button variant="primary" type="button" style={marginL} onClick={this.sortAlphRev}>
+                        <Button 
+                            variant="primary" 
+                            type="button" 
+                            style={marginL} 
+                            onClick={this.sortMap.bind(this, 'sort_alph_rev')}
+                        >
                             Reverse Alphabet Order
                         </Button>
-                        <Button variant="primary" type="button" style={marginL} onClick={this.sortRev}>
+                        <Button 
+                            variant="primary" 
+                            type="button" 
+                            style={marginL} 
+                            onClick={this.sortMap.bind(this, 'sort_rev')}
+                        >
                             Frequency
                         </Button>
-                        <Button variant="primary" type="button" style={marginL} onClick={this.sortFreqRev}>
+                        <Button 
+                            variant="primary" 
+                            type="button" 
+                            style={marginL} 
+                            onClick={this.sortMap.bind(this, 'sort_freq_rev')}
+                        >
                             Reverse Frequency
                         </Button>
-                        <input style={marginL} id="filter" type="text"/>
+                        <input 
+                            style={marginL} 
+                            id="filter" 
+                            type="text"
+                            value={this.state.filter}
+                            onChange={(event) => this.handleKeyChange(event, 'filter')}
+                        />
                         <Button variant="primary" type="button" style={marginL} onClick={this.filterMap}>
                             Filter
                         </Button></div>
@@ -270,13 +242,14 @@ class TabText extends Component {
                         </thead>
                         <tbody>
                         {this.state.filteredMap.map(function (value, key) {
-                            i++;
-                            return <tr>
-                                <td>{key}</td>
-                                <td>{value[0]}</td>
-                                <td>{value[1].amount}</td>
-                                <td>{value[1].code}</td>
-                            </tr>
+                            return (
+                                <tr key={key}>
+                                    <td>{key}</td>
+                                    <td>{value[0]}</td>
+                                    <td>{value[1].amount}</td>
+                                    <td>{value[1].code}</td>
+                                </tr>
+                            )
                         })}
 
                         </tbody>

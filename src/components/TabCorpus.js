@@ -1,84 +1,93 @@
-import React, {Component} from 'react';
+import React, { useEffect, useState } from 'react';
 import {Button, Table} from "react-bootstrap";
 
-const marginL = {
-    margin: "1.5em"
-};
+const TabCorpus = ({ updateKey }) => {
 
-class TabCorpus extends Component {
+    const [corpuse, setCorpuse] = useState([]);
+    const [inputValue, setInputValue] = useState('');
+    const [searchedText, setSearchedText] = useState('');
 
-    state = {
-        corpuse: []
+    useEffect(() => {
+        async function loadCorpuse() {
+            const responseJS = await fetch("http://localhost:5000/corpuse");
+            const response = await responseJS.json();
+            setCorpuse(response.corpuse);
+        }
+        loadCorpuse();        
+    }, []);
+
+    const openText = (name) => {
+        updateKey({tab: 2, filename: name});
+    }
+
+    const openAnnotateText = (name) => {
+        updateKey({tab: 4, filenameAn: name});
+    }
+
+    const searchText = async () => {
+        const responseJS = await fetch(`http://localhost:5000/searchText?words=${inputValue}`);
+        const response = await responseJS.json();
+        const name = response.text.name.replace('.json', '.txt');
+        setSearchedText(name);
     };
 
-    constructor(props) {
-        super(props);
-        this.openText = this.openText.bind(this);
-        this.openAnnotateText = this.openAnnotateText.bind(this);
-        this.loadCorpuse();
+    const handleChange = (event) => {
+        setInputValue(event.target.value);
     }
-
-    openText(event) {
-        this.props.updateKey({tab: 2, filename: event.target.name});
-    }
-
-    openAnnotateText(event) {
-        this.props.updateKey({tab: 4, filenameAn: event.target.name});
-    }
-
-    async loadCorpuse() {
-        let responseJS = await fetch("http://localhost:5000/corpuse");
-        let response = await responseJS.json();
-        this.setState({corpuse: response.corpuse});
-    }
-
-    searchText = async () => {
-        let words = document.querySelector('#search').value;
-        document.querySelectorAll('tr').forEach(tr=> tr.classList.remove('textTr'));
-        let responseJS = await fetch(`http://localhost:5000/searchText?words=${words}`);
-        let response = await responseJS.json();
-        let name = response.text.name.replace('.json', '.txt');
-        document.querySelector(`[name="${name}"]`).classList.add('textTr');
-    }
-
-    render() {
-        let i = 0;
-        return (
-
-            <div>
-                <input style={marginL} id="search" type="text"/>
-                <Button variant="primary" type="button" style={marginL} onClick={this.searchText}>
-                    Search
-                </Button>
-                <Table striped bordered hover>
-                    <thead>
+    
+    return (
+        <div>
+            <input 
+                style={{margin: '1em'}}
+                id="search" 
+                type="text" 
+                value={inputValue} 
+                onChange={handleChange} 
+            />
+            <Button variant="primary" type="button" style={{margin: '1em'}} onClick={searchText}>
+                Search
+            </Button>
+            <Table striped bordered hover>
+                <thead>
                     <tr>
                         <th>#</th>
                         <th>Filename</th>
                         <th>Number of words</th>
                         <th>Action</th>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {this.state.corpuse.map((file) => {
-                        i++;
-                        return <tr name={file.name}>
-                            <td>{i}</td>
-                            <td>{file.name}</td>
-                            <td>{file.number}</td>
-                            <td><Button style={{marginLeft: 1 + 'em'}} name={file.name}
-                                        onClick={this.openText}>Open</Button>
-                                <Button style={{marginLeft: 1 + 'em'}} name={file.name}
-                                        onClick={this.openAnnotateText}>Annotate</Button></td>
-                        </tr>
-                    })}
-
-                    </tbody>
-                </Table>
-            </div>
-
-        );
-    }
+                </thead>
+                <tbody>
+                {corpuse.map((file, i) => {
+                    const { name, number } = file;
+                    return (
+                    <tr 
+                        name={name}
+                        key={name}
+                        className={name === searchedText ? 'textTr' : ''}
+                    >
+                        <td>{i}</td>
+                        <td>{name}</td>
+                        <td>{number}</td>
+                        <td>
+                            <Button 
+                                style={{marginLeft: '1em'}}
+                                onClick={openText.bind(this, name)}
+                            >
+                                Open
+                            </Button>
+                            <Button 
+                                style={{marginLeft: '1em'}}
+                                onClick={openAnnotateText.bind(this, name)}
+                            >
+                                Annotate          
+                            </Button>
+                        </td>
+                    </tr>)
+                })}
+                </tbody>
+            </Table>
+        </div>
+    );
 }
 
 export default TabCorpus;

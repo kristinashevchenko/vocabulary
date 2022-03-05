@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import { Tab, Tabs } from 'react-bootstrap';
 import TabText from './TabText';
@@ -13,19 +12,23 @@ class TabsCustom extends Component {
         super();
         this.state = {
             activeTab: props.activeTab || 1,
-            filename:undefined
+            filename: undefined
         };
-
-        this.handleSelect = this.handleSelect.bind(this);
     }
 
     updateKey = (value) => {
-        if ( value.filenameAn) {
+        if (value.filenameAn) {
             this.setState({ activeTab: value.tab, filenameAn: value.filenameAn });
         } else if (value.filename) {
-            this.setState({ activeTab: value.tab,filename:value.filename});
+            this.setState({ activeTab: value.tab, filename: value.filename});
         }
 
+    }
+
+    handleSelect = (selectedTab) => {
+        this.setState({
+            activeTab: selectedTab
+        });
     }
 
     render() {
@@ -39,12 +42,6 @@ class TabsCustom extends Component {
                 <Tab eventKey={6} title="Codes definition"  ><TabCodeDef/></Tab>
             </Tabs>
         );
-    }
-
-    handleSelect(selectedTab) {
-        this.setState({
-            activeTab: selectedTab
-        });
     }
 }
 
