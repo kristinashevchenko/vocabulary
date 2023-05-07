@@ -9,7 +9,7 @@
     "draftjs-to-html": "^0.8.4",
     "highlight-within-textarea": "^2.0.5",
     "html-to-draftjs": "^1.4.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jquery-highlighttextarea": "^3.2.1",
     "react": "^16.9.0",
     "react-bootstrap": "^1.0.0-beta.12",
